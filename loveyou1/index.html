@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<!-- saved from url=(0027)http://itzoo.info/love.html -->
 <html lang="zh-CN"><head><meta charset="UTF-8">
         <title>Love</title>
-        
+        <link rel="icon" type="image/svg+xml" href="./Love_files/icon.svg">
+
         <link type="text/css" rel="stylesheet" href="./Love_files/default.css">
         <script type="text/javascript" src="./Love_files/jquery.min.js"></script>
         <script type="text/javascript" src="./Love_files/jscex.min.js"></script>
@@ -40,7 +40,7 @@
             <div id="wrap">
                <div id="text">
                     <div class="letter-seal" aria-hidden="true">
-                        <span>♥</span>
+                        <img src="./Love_files/icon.svg" alt="">
                         <em>LOVE</em>
                     </div>
                     <div class="letter-heading">
@@ -88,7 +88,7 @@
                     </article>
                     <article class="memory-frame" style="--tilt: 5deg;">
                         <div class="memory-photo memory-photo-b" aria-hidden="true">
-                            <span>♥</span>
+                            <img src="./Love_files/icon.svg" alt="">
                         </div>
                         <div class="memory-meta">
                             <strong>一路同行</strong>
@@ -116,7 +116,7 @@
                             <span class="envelope-pocket"></span>
                             <span class="envelope-flap-shadow"></span>
                             <span class="envelope-flap"></span>
-                            <span class="envelope-seal">♥</span>
+                            <span class="envelope-seal"><img src="./Love_files/icon.svg" alt="" width="38" height="38"></span>
                         </span>
                         <strong>点击开启情书</strong>
                         <p>种下属于我们的故事</p>
@@ -249,16 +249,15 @@
             foot.draw();
             tree.snapshot("p2", 500, 0, 610, 680);
 
-            // 会有闪烁不得意这样做, (＞﹏＜)
+            // 把成型的树烤进 #wrap 背景；画布保持透明，其上的树与背景 PNG 完全对齐，
+            // 之后画布转为绘制飘落花瓣，过渡无缝、不再需要淡黄底遮闪
             canvas.parent().css({
                 "background-image": "url(" + tree.toDataURL('image/png') + ")",
                 "background-size": width + "px " + height + "px",
                 "background-repeat": "no-repeat",
                 "background-position": "left top"
             });
-            canvas.css("background", "#ffe");
             $await(Jscex.Async.sleep(300));
-            canvas.css("background", "none");
         }));
 
         var jumpAnimate = eval(Jscex.compile("async", function () {

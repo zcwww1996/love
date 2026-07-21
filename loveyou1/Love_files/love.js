@@ -95,7 +95,6 @@
     Seed.prototype = {
         draw: function() {
             this.drawHeart();
-            this.drawText();
         },
         addPosition: function(x, y) {
             this.cirle.point = this.cirle.point.add(new Point(x, y));
@@ -152,31 +151,11 @@
             ctx.fill();
             ctx.restore();
         },
-        drawText: function() {
-            var ctx = this.tree.ctx, heart = this.heart;
-            var point = heart.point, color = heart.color, 
-                scale = heart.scale;
-            ctx.save();
-            ctx.strokeStyle = color;
-            ctx.fillStyle = color;
-            ctx.translate(point.x, point.y);
-            ctx.scale(scale, scale);
-            ctx.moveTo(0, 0);
-    	    ctx.lineTo(15, 15);
-    	    ctx.lineTo(60, 15);
-            ctx.stroke();
-
-            ctx.moveTo(0, 0);
-            ctx.scale(0.75, 0.75);
-            ctx.font = "12px 微软雅黑,Verdana"; // 字号肿么没有用? (ˉ(∞)ˉ)
-            ctx.fillText("click here", 23, 16);
-            ctx.restore();
-        },
         clear: function() {
             var ctx = this.tree.ctx, cirle = this.cirle;
             var point = cirle.point, scale = cirle.scale, radius = 26;
             var w = h = (radius * scale);
-            ctx.clearRect(point.x - w, point.y - h, 4 * w, 4 * h);
+            ctx.clearRect(point.x - w, point.y - h, 8 * w, 4 * h);
         },
         hover: function(x, y) {
             var ctx = this.tree.ctx;
@@ -223,9 +202,21 @@
         this.width = width;
         this.height = height;
         this.opt = opt || {};
+        this.ratio = this.opt.ratio || 1;
+
+        // 高清屏适配：把画布 backing store 放大到 CSS 尺寸 × ratio，
+        // 再按 ratio 缩放绘图坐标系。所有绘制坐标不变，但实际像素翻倍 → 更清晰。
+        // 不传 ratio 时默认为 1，行为与旧版完全一致（index2.html 即走这条路径）。
+        if (this.ratio !== 1) {
+            canvas.width = width * this.ratio;
+            canvas.height = height * this.ratio;
+            canvas.style.width = width + 'px';
+            canvas.style.height = height + 'px';
+            this.ctx.scale(this.ratio, this.ratio);
+        }
 
         this.record = {};
-        
+
         this.initSeed();
         this.initFooter();
         this.initBranch();
@@ -286,7 +277,7 @@
                 image = rec.image;
 
             ctx.save();
-            ctx.putImageData(image, point.x, point.y);
+            ctx.putImageData(image, point.x * s.ratio, point.y * s.ratio);
         	ctx.restore();
         },
 
@@ -369,8 +360,9 @@
         },
 
         snapshot: function(k, x, y, width, height) {
-            var ctx = this.ctx;
-            var image = ctx.getImageData(x, y, width, height); 
+            var ctx = this.ctx, r = this.ratio;
+            // getImageData 以设备像素为单位、忽略坐标系缩放，故乘 ratio
+            var image = ctx.getImageData(x * r, y * r, width * r, height * r);
             this.record[k] = {
                 image: image,
                 point: new Point(x, y),
@@ -382,20 +374,21 @@
             this.record[k || "move"].speed = speed;
         },
         move: function(k, x, y) {
-            var s = this, ctx = s.ctx;
+            var s = this, ctx = s.ctx, r = s.ratio;
             var rec = s.record[k || "move"];
             var point = rec.point,
                 image = rec.image,
                 speed = rec.speed || 10,
                 width = rec.width,
-                height = rec.height; 
+                height = rec.height;
 
             i = point.x + speed < x ? point.x + speed : x;
-            j = point.y + speed < y ? point.y + speed : y; 
+            j = point.y + speed < y ? point.y + speed : y;
 
             ctx.save();
+            // clearRect 吃坐标系缩放，用 CSS 坐标；putImageData 不吃，乘 ratio
             ctx.clearRect(point.x, point.y, width, height);
-            ctx.putImageData(image, i, j);
+            ctx.putImageData(image, i * r, j * r);
         	ctx.restore();
 
             rec.point = new Point(i, j);
@@ -455,19 +448,22 @@
         draw: function(p) {
             var s = this;
             var ctx = s.tree.ctx;
+            // 半径越粗越接近根部(棕褐)，越细越接近枝梢(嫩绿)，形成自然渐变
+            var t = Math.max(0, Math.min(1, s.radius / 12));
+            var r = Math.round(90 * t + 46 * (1 - t));
+            var g = Math.round(58 * t + 145 * (1 - t));
+            var b = Math.round(40 * t + 92 * (1 - t));
+            var color = 'rgb(' + r + ',' + g + ',' + b + ')';
             ctx.save();
         	ctx.beginPath();
-            //深黑色 rgb(35, 31, 32);
-            //RGB(0,139,139)
-            // RGB(102,205,170)
-            // RGB(34,139,34)
-        	ctx.fillStyle = 'RGB(0,128,128)';
-            ctx.shadowColor = '#22b822';
-            ctx.shadowBlur = 2;
+        	ctx.fillStyle = color;
+            ctx.shadowColor = color;
+            ctx.shadowBlur = 3;
         	ctx.moveTo(p.x, p.y);
         	ctx.arc(p.x, p.y, s.radius, 0, 2 * Math.PI);
         	ctx.closePath();
         	ctx.fill();
+
         	ctx.restore();
         }
     }
@@ -502,6 +498,8 @@
             ctx.save();
             ctx.fillStyle = s.color;
             ctx.globalAlpha = s.alpha;
+            ctx.shadowColor = s.color;
+            ctx.shadowBlur = 4;
             ctx.translate(s.point.x, s.point.y);
             ctx.scale(s.scale, s.scale);
             ctx.rotate(s.angle);
@@ -513,6 +511,7 @@
             }
             ctx.closePath();
             ctx.fill();
+
             ctx.restore();
         },
         jump: function() {

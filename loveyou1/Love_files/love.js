@@ -156,11 +156,6 @@
             var point = cirle.point, scale = cirle.scale, radius = 26;
             var w = h = (radius * scale);
             ctx.clearRect(point.x - w, point.y - h, 8 * w, 4 * h);
-        },
-        hover: function(x, y) {
-            var ctx = this.tree.ctx;
-            var pixel = ctx.getImageData(x, y, 1, 1);
-            return pixel.data[3] == 255
         }
     }
 
@@ -267,20 +262,6 @@
             return this.canvas.toDataURL(type);
         },
 
-        draw: function(k) {
-            var s = this, ctx = s.ctx;
-            var rec = s.record[k];
-            if (!rec) {
-                return ;
-            }
-            var point = rec.point,
-                image = rec.image;
-
-            ctx.save();
-            ctx.putImageData(image, point.x * s.ratio, point.y * s.ratio);
-        	ctx.restore();
-        },
-
         addBranch: function(branch) {
         	this.branchs.push(branch);
         },
@@ -369,9 +350,6 @@
                 width: width,
                 height: height
             }
-        },
-        setSpeed: function(k, speed) {
-            this.record[k || "move"].speed = speed;
         },
         move: function(k, x, y) {
             var s = this, ctx = s.ctx, r = s.ratio;
@@ -481,9 +459,6 @@
         this.figure = figure;
     }
     Bloom.prototype = {
-        setFigure: function(figure) {
-            this.figure = figure;
-        },
         flower: function() {
             var s = this;
             s.draw();

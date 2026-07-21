@@ -425,6 +425,13 @@ body.theme-night .letter-seal {
     letter-spacing: 0.22em;
 }
 
+.letter-seal img {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 6px;
+    filter: drop-shadow(0 1px 2px rgba(120, 60, 75, 0.25));
+}
+
 .letter-heading {
     padding-bottom: 12px;
     margin-bottom: 10px;
@@ -735,19 +742,26 @@ body.theme-night .start-guide-card {
     position: absolute;
     top: 103px;
     left: 50%;
-    width: 46px;
-    height: 46px;
-    margin: -23px 0 0 -23px;
+    width: 54px;
+    height: 54px;
+    margin: -27px 0 0 -27px;
     display: grid;
     place-items: center;
     border-radius: 50%;
-    color: #fff;
-    font-size: 21px;
-    background: radial-gradient(circle at 34% 30%, #ef8199, #b8465f);
-    box-shadow: 0 5px 12px rgba(150, 40, 60, 0.35), inset 0 0 0 2px rgba(255, 255, 255, 0.28);
+    background: radial-gradient(circle at 36% 28%, #fffaf0 0%, #f4e6cb 68%, #e7cd97 100%);
+    box-shadow: 0 5px 12px rgba(120, 70, 30, 0.35),
+                inset 0 0 0 2px rgba(203, 155, 62, 0.55);
     z-index: 5;
     animation: heartPulse 1.8s ease-in-out infinite;
     transition: transform 0.5s ease, opacity 0.45s ease;
+}
+
+.envelope-seal img {
+    display: block;
+    width: 38px;
+    height: 38px;
+    pointer-events: none;
+    filter: drop-shadow(0 1px 1px rgba(120, 70, 30, 0.25));
 }
 
 #start-guide.is-opening .start-guide-card {
@@ -815,7 +829,7 @@ body.theme-night .envelope-paper em {
 }
 
 body.theme-night .envelope-seal {
-    background: radial-gradient(circle at 34% 30%, #f0a0b2, #9b5fbf);
+    background: radial-gradient(circle at 36% 28%, #f6ecd6 0%, #ddc48f 68%, #cba76c 100%);
 }
 
 .start-guide-card strong {
@@ -1028,6 +1042,14 @@ body.theme-night .memory-frame:focus-within {
 
 .memory-photo-b span {
     font-size: 28px;
+}
+
+.memory-photo-b img {
+    position: relative;
+    z-index: 1;
+    width: 46px;
+    height: 46px;
+    filter: drop-shadow(0 2px 8px rgba(80, 20, 40, 0.28));
 }
 
 .memory-photo-c {

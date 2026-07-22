@@ -1,7 +1,3 @@
-/*
- * http://love.hackerzhou.me
- */
-
 var $win = $(window);
 var THEME_STORAGE_KEY = "love-page-theme";
 
@@ -133,7 +129,32 @@ $(function() {
         media.addEventListener("pause", updateMusicToggle);
         updateMusicToggle();
 
-        $musicToggle.on("click", function() {
+        var tryPlayAudio = function() {
+            if (media.paused) {
+                var promise = media.play();
+                if (promise && promise.catch) {
+                    promise.catch(function() {
+                        // 浏览器限制自动播放时，在用户首次任意交互（如点击信封或页面）时自动解锁播放
+                        var autoPlayOnInteraction = function() {
+                            if (media.paused) {
+                                media.play().then(updateMusicToggle).catch(function(){});
+                            }
+                            document.removeEventListener("click", autoPlayOnInteraction, true);
+                            document.removeEventListener("touchstart", autoPlayOnInteraction, true);
+                            document.removeEventListener("pointerdown", autoPlayOnInteraction, true);
+                        };
+                        document.addEventListener("click", autoPlayOnInteraction, true);
+                        document.addEventListener("touchstart", autoPlayOnInteraction, true);
+                        document.addEventListener("pointerdown", autoPlayOnInteraction, true);
+                    });
+                }
+            }
+        };
+
+        tryPlayAudio();
+
+        $musicToggle.on("click", function(e) {
+            e.stopPropagation();
             if (media.paused) {
                 var playResult = media.play();
                 if (playResult && playResult.catch) {
@@ -193,7 +214,7 @@ $(function() {
 
 				$ele.html(
 					str.substring(0, progress)
-					+ (progress < str.length ? "<span class=\"type-cursor\">_</span>" : "")
+					+ (progress < str.length ? "<span class=\"type-cursor\">|</span>" : "")
 				);
 
 				if (progress >= str.length) {

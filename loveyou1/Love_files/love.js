@@ -180,8 +180,8 @@
             ctx.translate(point.x, point.y);
             ctx.beginPath();
             ctx.moveTo(0, 0);
-    	    ctx.lineTo(len, 0);
-    	    ctx.lineTo(-len, 0);
+            ctx.lineTo(len, 0);
+            ctx.lineTo(-len, 0);
             ctx.stroke();
             ctx.restore();
 
@@ -433,16 +433,16 @@
             var b = Math.round(40 * t + 92 * (1 - t));
             var color = 'rgb(' + r + ',' + g + ',' + b + ')';
             ctx.save();
-        	ctx.beginPath();
-        	ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.fillStyle = color;
             ctx.shadowColor = color;
             ctx.shadowBlur = 3;
-        	ctx.moveTo(p.x, p.y);
-        	ctx.arc(p.x, p.y, s.radius, 0, 2 * Math.PI);
-        	ctx.closePath();
-        	ctx.fill();
+            ctx.moveTo(p.x, p.y);
+            ctx.arc(p.x, p.y, s.radius, 0, 2 * Math.PI);
+            ctx.closePath();
+            ctx.fill();
 
-        	ctx.restore();
+            ctx.restore();
         }
     }
 
